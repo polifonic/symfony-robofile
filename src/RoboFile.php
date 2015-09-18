@@ -176,7 +176,7 @@ class RoboFile extends Tasks
             ->run();
     }
 
-    protected updateVersion($version)
+    protected function updateVersion($version)
     {
     	$version = $this->getVersion();
 
