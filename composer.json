@@ -1,0 +1,14 @@
+{
+	"name": "polifonic/symfony-robo",
+	"license": "MIT",
+	"type": "project",
+	"description": "Robo file for symfony apps",
+	"require": {
+		"codegyre/robo": "*"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1.x-dev"
+		}
+	}
+}
