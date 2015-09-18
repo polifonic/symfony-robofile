@@ -6,6 +6,11 @@
 	"require": {
 		"codegyre/robo": "*"
 	},
+	"autoload": {
+		"psr-4": {
+			"Polifonic\\Robo\\": "src"
+		}
+	},
 	"extra": {
 		"branch-alias": {
 			"dev-master": "0.1.x-dev"
