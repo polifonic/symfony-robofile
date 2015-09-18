@@ -101,30 +101,23 @@ class RoboFile extends Tasks
     public function versionBump($version = '')
     {
         if (!$version) {
-            $versionParts = explode('.', Version::VERSION);
-            $versionParts[count($versionParts)-1]++;
-            $version = implode('.', $versionParts);
+            $version = $this->updateVersion();
         }
 
         $this->say("Bumping version to $version");
 
-        $this->taskReplaceInFile('src/Version.php')
-            ->from(Version::VERSION)
-            ->to($version)
-            ->run();
+        $this->writeVersion($version);
     }
 
     public function release()
     {
     	$this->stopOnFail();
 
-    	$version = Version::VERSION;
+    	$version = $this->getVersion();
 
     	$this->say('Current version: '.$version);
 
-        $versionParts = explode('.', Version::VERSION);
-        $versionParts[count($versionParts)-1]++;
-        $version = implode('.', $versionParts);
+    	$version = $this->updateVersion();
 
         $this->say('Computing new version: '.$version);
 
@@ -136,10 +129,7 @@ class RoboFile extends Tasks
 
     	$this->say('Bumping up new release number to '.$version);
 
-        $this->taskReplaceInFile('src/Version.php')
-            ->from(Version::VERSION)
-            ->to($version)
-            ->run();
+    	$this->writeVersion($version);
 
         $this->say('Committing');
 
@@ -171,5 +161,29 @@ class RoboFile extends Tasks
 
         $this->taskExec('cap deploy')
         	->run();
+    }
+
+    protected function getVersion()
+    {
+    	return Version::VERSION;
+    }
+
+    protected function writeVersion($version)
+    {
+        $this->taskReplaceInFile('src/Version.php')
+            ->from(Version::VERSION)
+            ->to($version)
+            ->run();
+    }
+
+    protected updateVersion($version)
+    {
+    	$version = $this->getVersion();
+
+        $versionParts = explode('.', $version);
+        $versionParts[count($versionParts)-1]++;
+        $version = implode('.', $versionParts);
+
+        return $version;
     }
 }
