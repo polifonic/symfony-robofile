@@ -17,10 +17,6 @@ class RoboFile extends Tasks
     {
         $this->stopOnFail();
 
-        $this->taskGitStack()
-            ->pull()
-            ->run();
-
         $this->taskComposerUpdate()
             ->run();
 
