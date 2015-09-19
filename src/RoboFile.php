@@ -6,6 +6,8 @@ use Robo\Tasks;
 
 class RoboFile extends Tasks
 {
+    use \Polifonic\Robo\Task\Symfony\loadTasks;
+
 	const OS_MACOS = 1;
 	const OS_WINDOWS = 2;
 	const OS_LINUX  = 3;
@@ -22,29 +24,24 @@ class RoboFile extends Tasks
 		$this->taskComposerUpdate()
 			->run();
 
-		$this->taskExec('php app/console')
-			->arg('cache:clear')
-			->arg('--no-warmup')
-			->arg('--env=dev')
+		$this->taskSymfony('cache:clear')
+			->option('no-warmup')
+			->option('env', 'dev')
 			->run();
 
-		$this->taskExec('php app/console')
-			->arg('cache:clear')
-			->arg('--no-warmup')
-			->arg('--env=prod')
+		$this->taskSymfony('cache:clear')
+			->option('no-warmup')
+			->option('env', 'prod')
 			->run();
 
-		$this->taskExec('php app/console')
-			->arg('propel:model:build')
+		$this->taskSymfony('propel:model:build')
 			->run();
 
 		if (self::OS_WINDOWS === $this->os()) {
-			$this->taskExec('php app/console')
-				->arg('assets:install')
+			$this->taskSymfony('assets:install')
 				->run();
 		} else {
-			$this->taskExec('php app/console')
-				->arg('assets:install')
+			$this->taskSymfony('assets:install')
 				->arg('--symlink')
 				->run();
 		}
@@ -65,18 +62,6 @@ class RoboFile extends Tasks
 		}
 
 		return $os;
-	}
-
-	public function propelDiff()
-	{
-		$this->taskSymfonyCommand('propel:migration:generate-diff')
-			->run();
-	}
-
-	public function propelMigrate()
-	{
-		$this->taskSymfonyCommand('propel:migration:migrate')
-			->run();
 	}
 
 	public function clean()
