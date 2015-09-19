@@ -78,16 +78,14 @@ class RoboFile extends Tasks
 
     public function versionShow()
     {
-        $version = Version::VERSION;
+        $version = $this->getVersion();
 
         $this->say($version);
     }
 
-    public function versionBump($version = '')
+    public function versionBump()
     {
-        if (!$version) {
-            $version = $this->updateVersion();
-        }
+        $version = $this->updateVersion();
 
         $this->say("Bumping version to $version");
 
@@ -150,7 +148,7 @@ class RoboFile extends Tasks
 
     protected function getVersion()
     {
-        return Version::VERSION;
+        return \Version::VERSION;
     }
 
     protected function writeVersion($version)
@@ -161,9 +159,9 @@ class RoboFile extends Tasks
             ->run();
     }
 
-    protected function updateVersion($version)
+    protected function updateVersion($version = null)
     {
-        $version = $this->getVersion();
+        $version = $version ?: $this->getVersion();
 
         $versionParts = explode('.', $version);
         ++$versionParts[count($versionParts) - 1];
