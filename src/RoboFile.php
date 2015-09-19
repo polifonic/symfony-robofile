@@ -150,7 +150,7 @@ class RoboFile extends Tasks
     protected function writeVersion($version)
     {
         $this->taskReplaceInFile('src/Version.php')
-            ->from(Version::VERSION)
+            ->from(\Version::VERSION)
             ->to($version)
             ->run();
     }
