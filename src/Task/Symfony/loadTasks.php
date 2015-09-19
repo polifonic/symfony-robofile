@@ -16,6 +16,7 @@ trait loadTasks
 
     /**
      * @param $command
+     *
      * @return SymfonyTask
      */
     protected function taskSymfony($command)

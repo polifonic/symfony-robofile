@@ -8,67 +8,67 @@ class RoboFile extends Tasks
 {
     use \Polifonic\Robo\Task\Symfony\loadTasks;
 
-	const OS_MACOS = 1;
-	const OS_WINDOWS = 2;
-	const OS_LINUX  = 3;
-	const OS_OTHER = 4;
+    const OS_MACOS = 'OSX';
+    const OS_WINDOWS = 'Windows';
+    const OS_LINUX = 'Linux';
+    const OS_OTHER = 'Other';
 
-	function build()
-	{
-		$this->stopOnFail();
+    public function build()
+    {
+        $this->stopOnFail();
 
-		$this->taskGitStack()
-			->pull()
-			->run();
+        $this->taskGitStack()
+            ->pull()
+            ->run();
 
-		$this->taskComposerUpdate()
-			->run();
+        $this->taskComposerUpdate()
+            ->run();
 
-		$this->taskSymfony('cache:clear')
-			->option('no-warmup')
-			->option('env', 'dev')
-			->run();
+        $this->taskSymfony('cache:clear')
+            ->option('no-warmup')
+            ->option('env', 'dev')
+            ->run();
 
-		$this->taskSymfony('cache:clear')
-			->option('no-warmup')
-			->option('env', 'prod')
-			->run();
+        $this->taskSymfony('cache:clear')
+            ->option('no-warmup')
+            ->option('env', 'prod')
+            ->run();
 
-		$this->taskSymfony('propel:model:build')
-			->run();
+        $this->taskSymfony('propel:model:build')
+            ->run();
 
-		if (self::OS_WINDOWS === $this->os()) {
-			$this->taskSymfony('assets:install')
-				->run();
-		} else {
-			$this->taskSymfony('assets:install')
-				->arg('--symlink')
-				->run();
-		}
-	}
+        if (self::OS_WINDOWS === $this->os()) {
+            $this->taskSymfony('assets:install')
+                ->run();
+        } else {
+            $this->taskSymfony('assets:install')
+                ->arg('--symlink')
+                ->run();
+        }
+    }
 
-	public function os()
-	{
-		$uname = strtolower(php_uname());
+    public function os()
+    {
+        $uname = strtolower(php_uname());
 
-		if (strpos($uname, "darwin") !== false) {
-		    $os = self::OS_MACOS;
-		} else if (strpos($uname, "win") !== false) {
-		    $os = self::OS_WINDOWS;
-		} else if (strpos($uname, "linux") !== false) {
-		    $os = self::OS_LINUX;
-		} else {
-			$os = self::OS_OTHER;
-		}
+        if (strpos($uname, 'darwin') !== false) {
+            $os = self::OS_MACOS;
+        } elseif (strpos($uname, 'win') !== false) {
+            $os = self::OS_WINDOWS;
+        } elseif (strpos($uname, 'linux') !== false) {
+            $os = self::OS_LINUX;
+        } else {
+            $os = self::OS_OTHER;
+        }
 
-		return $os;
-	}
+        return $os;
+    }
 
-	public function clean()
+    public function clean()
     {
         $this->taskCleanDir([
             'app/cache',
-            'app/logs'
+            'app/logs',
         ])->run();
 
         $this->taskDeleteDir([
@@ -78,9 +78,9 @@ class RoboFile extends Tasks
 
     public function versionShow()
     {
-    	$version = Version::VERSION;
+        $version = Version::VERSION;
 
-    	$this->say($version);
+        $this->say($version);
     }
 
     public function versionBump($version = '')
@@ -96,61 +96,61 @@ class RoboFile extends Tasks
 
     public function release()
     {
-    	$this->stopOnFail();
+        $this->stopOnFail();
 
-    	$version = $this->getVersion();
+        $version = $this->getVersion();
 
-    	$this->say('Current version: '.$version);
+        $this->say('Current version: '.$version);
 
-    	$version = $this->updateVersion();
+        $version = $this->updateVersion();
 
         $this->say('Computing new version: '.$version);
 
         $this->say('Starting new release');
 
-    	$this->taskExec('git flow release start')
-    		->arg($version)
-    		->run();
+        $this->taskExec('git flow release start')
+            ->arg($version)
+            ->run();
 
-    	$this->say('Bumping up new release number to '.$version);
+        $this->say('Bumping up new release number to '.$version);
 
-    	$this->writeVersion($version);
+        $this->writeVersion($version);
 
         $this->say('Committing');
 
-		$this->taskGitStack()
+        $this->taskGitStack()
             ->add('-A')
-            ->commit("updated version number")
+            ->commit('updated version number')
             ->run();
 
         $this->say('Finishing release '.$version);
 
         $this->taskExec('git flow release finish')
-        	->arg('-m '.$version)
-        	->arg($version)
-        	->run();
+            ->arg('-m '.$version)
+            ->arg($version)
+            ->run();
 
         $this->say('Pushing to remote');
 
-		$this->taskGitStack()
+        $this->taskGitStack()
             ->push('origin', 'master')
             ->run();
 
-		$this->taskGitStack()
+        $this->taskGitStack()
             ->push('origin', 'develop')
             ->run();
 
-		$this->taskGitStack()
+        $this->taskGitStack()
             ->push('origin', '--tags')
             ->run();
 
         $this->taskExec('cap deploy')
-        	->run();
+            ->run();
     }
 
     protected function getVersion()
     {
-    	return Version::VERSION;
+        return Version::VERSION;
     }
 
     protected function writeVersion($version)
@@ -163,10 +163,10 @@ class RoboFile extends Tasks
 
     protected function updateVersion($version)
     {
-    	$version = $this->getVersion();
+        $version = $this->getVersion();
 
         $versionParts = explode('.', $version);
-        $versionParts[count($versionParts)-1]++;
+        ++$versionParts[count($versionParts) - 1];
         $version = implode('.', $versionParts);
 
         return $version;

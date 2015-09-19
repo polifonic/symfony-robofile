@@ -6,6 +6,9 @@
 	"require": {
 		"codegyre/robo": "*"
 	},
+	"require-dev": {
+		"fabpot/php-cs-fixer": "*@stable"
+	},
 	"autoload": {
 		"psr-4": {
 			"Polifonic\\Robo\\": "src"
