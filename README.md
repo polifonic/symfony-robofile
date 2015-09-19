@@ -56,7 +56,6 @@ The package's `RoboFile` class provides the following tasks:
 
 The `build` task will perform the following taks:
 
-* `git pull` on current branch
 * `composer update`
 * clear the cache in both `dev` and `prod` environments
 * build propel model
