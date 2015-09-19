@@ -42,7 +42,7 @@ class RoboFile extends Tasks
                 ->run();
         } else {
             $this->taskSymfony('assets:install')
-                ->arg('--symlink')
+                ->option('symlink')
                 ->run();
         }
     }
