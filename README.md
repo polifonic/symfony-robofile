@@ -2,7 +2,7 @@
 
 A RoboFile for symfony apps.
 
-This is the RoboFile that we use for building our own Symfony apps, and we are just making it available to the community. Obviouly it is geared to the way we do things (for example, we use Propel), but it is easy to extend, and can at the very least it can serve as an example or inspiration for your own implementation.
+This is the RoboFile that we use for building our own Symfony apps, and we are just making it available to the community. Obviouly it is geared to the way we do things (for example, we use Propel), but it is easy to extend, and hopefully at the very least it can serve as an example or inspiration for your own implementation.
 
 The package also provides a custom `SymfonyTask` which is the equivalent of running `php app/console` on the command line. Note that this is not quite the same as the `SymfonyCommand` task provided by the original Robo package (which does not include the app kernel, for one thing, and therefore does not recognize the `env` option).
 
@@ -63,7 +63,7 @@ The `build` task will perform the following taks:
 
 ### release
 
-The `release` task uses git-flow to create a new release, following the steps below. It assumes that git flow has been installed and initialed for this project.
+The `release` task uses git-flow to create a new release, following the steps below. It assumes that git flow has been installed and initialized for this project.
 
 * compute the incremented version number (see below)
 * create a new git flow release named after thew incremented version number
