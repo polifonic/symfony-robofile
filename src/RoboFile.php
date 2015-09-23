@@ -17,6 +17,28 @@ class RoboFile extends Tasks
     {
         $this->stopOnFail();
 
+        $this->taskComposerInstall()
+            ->run();
+
+        $this->taskSymfony('cache:clear')
+            ->option('no-warmup')
+            ->option('env', 'dev')
+            ->run();
+
+        $this->taskSymfony('cache:clear')
+            ->option('no-warmup')
+            ->option('env', 'prod')
+            ->run();
+
+        $this->propelBuild();
+
+        $this->assets();
+    }
+
+    public function buildAll()
+    {
+        $this->stopOnFail();
+
         $this->taskComposerUpdate()
             ->run();
 
@@ -30,9 +52,27 @@ class RoboFile extends Tasks
             ->option('env', 'prod')
             ->run();
 
+        $this->propelBuild();
+
+        $this->propelMigrate();
+
+        $this->assets();
+    }
+
+    public function propelBuild()
+    {
         $this->taskSymfony('propel:model:build')
             ->run();
+    }
 
+    public function propelMigrate()
+    {
+        $this->taskSymfony('propel:migration:migrate')
+            ->run();
+    }
+
+    public function assets()
+    {
         if (self::OS_WINDOWS === $this->os()) {
             $this->taskSymfony('assets:install')
                 ->run();
@@ -41,6 +81,14 @@ class RoboFile extends Tasks
                 ->option('symlink')
                 ->run();
         }
+    }
+
+    public function phpunit()
+    {
+        $this->stopOnFail();
+
+        $this->taskExec('vendor/bin/phpunit -c app')
+            ->run();
     }
 
     public function os()
