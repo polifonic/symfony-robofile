@@ -52,26 +52,32 @@ robo <task>
 
 The package's `RoboFile` class provides the following tasks:
 
+### assets
+
+The `assets` task will run the symfony `assets:install` command, using the `--symlink` option if the current OS is other than Windows.
+
 ### build
+
+The `build` task will perform the following taks:
+
+* `composer install`
+* clear the cache in both `dev` and `prod` environments
+* build propel model
+* install assets
+
+### build:all
 
 The `build` task will perform the following taks:
 
 * `composer update`
 * clear the cache in both `dev` and `prod` environments
 * build propel model
+* run propel migrations
 * install assets
 
-### release
+### git:sync-tags
 
-The `release` task uses git-flow to create a new release, following the steps below. It assumes that git flow has been installed and initialized for this project.
-
-* compute the incremented version number (see below)
-* create a new git flow release named after thew incremented version number
-* write the incremented version number to file
-* commit the change
-* finish the git flow release; it will be tagged with the incremented version number
-* push both develop and master branches to the remote repo
-* run `cap deploy`
+The `git:sync-tags` will sync the local tags with the remote tags, removing any local tag not found on the remote.
 
 ### os
 
@@ -83,6 +89,36 @@ Displays the current OS as one of the following:
 * Other
 
 This is used in the build task when running the `assets:install` command: if the OS is Windows, assets will be copied; otherwise, they will be symlinked.
+
+### phpunit
+
+The `phpunit` task will run the phpunit tests via the following command:
+
+```xterm
+vendor/bin/phpunit -c app/
+```
+
+### release
+
+The `release` task uses git-flow to create a new release, following the steps below. It assumes that git flow has been installed and initialized for this project.
+
+It then uses capifony to deploy the new release. It assumes that capifony has been installed and setup for the app.
+
+* compute the incremented version number (see below)
+* create a new git flow release named after thew incremented version number
+* write the incremented version number to file
+* commit the change
+* finish the git flow release; it will be tagged with the incremented version number
+* push both develop and master branches to the remote repo
+* run `cap deploy`
+
+### version:show
+
+The `version:show` task will display the current version number. This is read from the `Version::VERSION` class constant (see below).
+
+### version:bump
+
+The `version:bump` task will bump the build portion of the current version number.
 
 ## Version numbers
 

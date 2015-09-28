@@ -13,7 +13,56 @@ class RoboFile extends Tasks
     const OS_LINUX = 'Linux';
     const OS_OTHER = 'Other';
 
+    public function assets()
+    {
+        if (self::OS_WINDOWS === $this->os()) {
+            $this->taskSymfony('assets:install')
+                ->run();
+        } else {
+            $this->taskSymfony('assets:install')
+                ->option('symlink')
+                ->run();
+        }
+    }
+
+    /**
+     * Builds app. Will run:
+     * - composer install
+     * - cache:clear command in both dev and prod environments
+     * - propel:model:build
+     * - assets:install
+     */
     public function build()
+    {
+        $this->stopOnFail();
+
+        $this->taskComposerInstall()
+            ->run();
+
+        $this->taskSymfony('cache:clear')
+            ->option('no-warmup')
+            ->option('env', 'dev')
+            ->run();
+
+        $this->taskSymfony('cache:clear')
+            ->option('no-warmup')
+            ->option('env', 'prod')
+            ->run();
+
+        $this->propelBuild();
+
+        $this->assets();
+    }
+
+    /**
+     * Builds app. Will run:
+     * - composer update
+     * - cache:clear command in both dev and prod environments
+     * - propel:model:build
+     * - propel:migration:migrate
+     * - assets:install
+     */
+    public function buildAll()
     {
         $this->stopOnFail();
 
@@ -30,17 +79,31 @@ class RoboFile extends Tasks
             ->option('env', 'prod')
             ->run();
 
-        $this->taskSymfony('propel:model:build')
-            ->run();
+        $this->propelBuild();
 
-        if (self::OS_WINDOWS === $this->os()) {
-            $this->taskSymfony('assets:install')
-                ->run();
-        } else {
-            $this->taskSymfony('assets:install')
-                ->option('symlink')
-                ->run();
-        }
+        $this->propelMigrate();
+
+        $this->assets();
+    }
+
+    public function clean()
+    {
+        $this->taskCleanDir([
+            'app/cache',
+            'app/logs',
+        ])->run();
+
+        $this->taskDeleteDir([
+            'web/assets/tmp_uploads',
+        ])->run();
+    }
+
+    public function phpunit()
+    {
+        $this->stopOnFail();
+
+        $this->taskExec('vendor/bin/phpunit -c app')
+            ->run();
     }
 
     public function os()
@@ -60,32 +123,14 @@ class RoboFile extends Tasks
         return $os;
     }
 
-    public function clean()
-    {
-        $this->taskCleanDir([
-            'app/cache',
-            'app/logs',
-        ])->run();
-
-        $this->taskDeleteDir([
-            'web/assets/tmp_uploads',
-        ])->run();
+    public function propelBuild()
+        $this->taskSymfony('propel:model:build')
+            ->run();
     }
 
-    public function versionShow()
-    {
-        $version = $this->getVersion();
-
-        $this->say($version);
-    }
-
-    public function versionBump()
-    {
-        $version = $this->updateVersion();
-
-        $this->say("Bumping version to $version");
-
-        $this->writeVersion($version);
+    public function propelMigrate()
+        $this->taskSymfony('propel:migration:migrate')
+            ->run();
     }
 
     public function release()
@@ -128,18 +173,28 @@ class RoboFile extends Tasks
 
         $this->taskGitStack()
             ->push('origin', 'master')
-            ->run();
-
-        $this->taskGitStack()
             ->push('origin', 'develop')
-            ->run();
-
-        $this->taskGitStack()
             ->push('origin', '--tags')
             ->run();
 
         $this->taskExec('cap deploy')
             ->run();
+    }
+
+    public function versionShow()
+    {
+        $version = $this->getVersion();
+
+        $this->say($version);
+    }
+
+    public function versionBump()
+    {
+        $version = $this->updateVersion();
+
+        $this->say("Bumping version to $version");
+
+        $this->writeVersion($version);
     }
 
     protected function getVersion()
