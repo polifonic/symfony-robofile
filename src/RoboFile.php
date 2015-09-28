@@ -124,11 +124,13 @@ class RoboFile extends Tasks
     }
 
     public function propelBuild()
+    {
         $this->taskSymfony('propel:model:build')
             ->run();
     }
 
     public function propelMigrate()
+    {
         $this->taskSymfony('propel:migration:migrate')
             ->run();
     }
