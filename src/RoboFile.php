@@ -98,14 +98,21 @@ class RoboFile extends Tasks
         ])->run();
     }
 
-    public function phpunit()
+    /**
+     * Synchronizes local tags with remote. REmoves local tags not on remote.
+     */
+    public function gitSyncTags()
     {
-        $this->stopOnFail();
+        $this->taskExec('git tag -d $(git tag)')
+            ->run();
 
-        $this->taskExec('vendor/bin/phpunit -c app')
+        $this->taskExec('git fetch --tags')
             ->run();
     }
 
+    /**
+     * Determines current os.
+     */
     public function os()
     {
         $uname = strtolower(php_uname());
@@ -121,6 +128,17 @@ class RoboFile extends Tasks
         }
 
         return $os;
+    }
+
+    /**
+     * Runs phpunit tests for app.
+     */
+    public function phpunit()
+    {
+        $this->stopOnFail();
+
+        $this->taskExec('vendor/bin/phpunit -c app')
+            ->run();
     }
 
     public function propelBuild()
