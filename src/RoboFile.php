@@ -99,16 +99,6 @@ class RoboFile extends Tasks
     }
 
     /**
-     * Generates a new secret string.
-     */
-    public function secret()
-    {
-        $secret = hash('sha1', uniqid(mt_rand()));
-
-        $this->say($secret);
-    }
-
-    /**
      * Synchronizes local tags with remote. REmoves local tags not on remote.
      */
     public function gitSyncTags()
@@ -209,6 +199,16 @@ class RoboFile extends Tasks
 
         $this->taskExec('cap deploy')
             ->run();
+    }
+
+    /**
+     * Generates a new secret string.
+     */
+    public function secret()
+    {
+        $secret = hash('sha1', uniqid(mt_rand()));
+
+        $this->say($secret);
     }
 
     public function versionShow()

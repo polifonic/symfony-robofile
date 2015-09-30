@@ -112,6 +112,10 @@ It then uses capifony to deploy the new release. It assumes that capifony has be
 * push both develop and master branches to the remote repo
 * run `cap deploy`
 
+### secret
+
+The `secret` generates and displays a "secret" string for use in the symfony app framework configuration.
+
 ### version:show
 
 The `version:show` task will display the current version number. This is read from the `Version::VERSION` class constant (see below).
