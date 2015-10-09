@@ -36,7 +36,13 @@ class RoboFile extends Tasks
     {
         $this->stopOnFail();
 
-        $this->taskComposerInstall()
+        $path_to_composer = null;
+        
+        if (self::OS_WINDOWS === $this->os()) {
+            $path_to_composer = 'composer';
+        }
+        
+        $this->taskComposerInstall($path_to_composer)
             ->run();
 
         $this->taskSymfony('cache:clear')
@@ -66,7 +72,13 @@ class RoboFile extends Tasks
     {
         $this->stopOnFail();
 
-        $this->taskComposerUpdate()
+        $path_to_composer = null;
+        
+        if (self::OS_WINDOWS === $this->os()) {
+            $path_to_composer = 'composer';
+        }
+        
+        $this->taskComposerUpdate($path_to_composer)
             ->run();
 
         $this->taskSymfony('cache:clear')
