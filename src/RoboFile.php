@@ -37,11 +37,11 @@ class RoboFile extends Tasks
         $this->stopOnFail();
 
         $path_to_composer = null;
-        
+
         if (self::OS_WINDOWS === $this->os()) {
             $path_to_composer = 'composer';
         }
-        
+
         $this->taskComposerInstall($path_to_composer)
             ->run();
 
@@ -73,11 +73,11 @@ class RoboFile extends Tasks
         $this->stopOnFail();
 
         $path_to_composer = null;
-        
+
         if (self::OS_WINDOWS === $this->os()) {
             $path_to_composer = 'composer';
         }
-        
+
         $this->taskComposerUpdate($path_to_composer)
             ->run();
 
@@ -108,6 +108,12 @@ class RoboFile extends Tasks
         $this->taskDeleteDir([
             'web/assets/tmp_uploads',
         ])->run();
+    }
+
+    public function deploy()
+    {
+        $this->taskExec('cap deploy')
+            ->run();
     }
 
     /**
@@ -209,8 +215,7 @@ class RoboFile extends Tasks
             ->push('origin', '--tags')
             ->run();
 
-        $this->taskExec('cap deploy')
-            ->run();
+        $this->deploy();
     }
 
     /**
