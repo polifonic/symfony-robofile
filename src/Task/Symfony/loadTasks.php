@@ -4,12 +4,12 @@ namespace Polifonic\Robo\Task\Symfony;
 
 trait loadTasks
 {
-    public function cacheClear()
+    public function taskSymfonyCacheClear()
     {
         return $this->taskSymfony('cache:clear');
     }
 
-    public function assetsInstall()
+    public function taskSymfonyAssetsInstall()
     {
         return $this->taskSymfony('assets:install');
     }
@@ -21,6 +21,6 @@ trait loadTasks
      */
     protected function taskSymfony($command)
     {
-        return new SymfonyTask($command);
+        return $this->task(SymfonyConsoleTask::class, $command);
     }
 }

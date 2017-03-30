@@ -4,7 +4,7 @@ namespace Polifonic\Robo\Task\Symfony;
 
 use Robo\Task\Base\Exec;
 
-class SymfonyTask extends Exec
+class SymfonyConsoleTask extends Exec
 {
     public function getCommand()
     {

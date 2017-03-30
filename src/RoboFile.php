@@ -13,6 +13,12 @@ class RoboFile extends Tasks
     const OS_LINUX = 'Linux';
     const OS_OTHER = 'Other';
 
+    public function assetic()
+    {
+        $this->taskSymfony('assetic:dump')
+            ->run();
+    }
+
     public function assets()
     {
         if (self::OS_WINDOWS === $this->os()) {
@@ -36,15 +42,6 @@ class RoboFile extends Tasks
     {
         $this->stopOnFail();
 
-        $path_to_composer = null;
-
-        if (self::OS_WINDOWS === $this->os()) {
-            $path_to_composer = 'composer';
-        }
-
-        $this->taskComposerInstall($path_to_composer)
-            ->run();
-
         $this->taskSymfony('cache:clear')
             ->option('no-warmup')
             ->option('env', 'dev')
@@ -57,7 +54,11 @@ class RoboFile extends Tasks
 
         $this->propelBuild();
 
+        $this->propelMigrate();
+
         $this->assets();
+
+        $this->assetic();
     }
 
     /**
@@ -81,21 +82,7 @@ class RoboFile extends Tasks
         $this->taskComposerUpdate($path_to_composer)
             ->run();
 
-        $this->taskSymfony('cache:clear')
-            ->option('no-warmup')
-            ->option('env', 'dev')
-            ->run();
-
-        $this->taskSymfony('cache:clear')
-            ->option('no-warmup')
-            ->option('env', 'prod')
-            ->run();
-
-        $this->propelBuild();
-
-        $this->propelMigrate();
-
-        $this->assets();
+        $this->build();
     }
 
     public function clean()

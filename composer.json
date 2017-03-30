@@ -1,9 +1,10 @@
 {
 	"name": "polifonic/symfony-robo",
 	"license": "MIT",
-	"type": "project",
-	"description": "Robo file for symfony apps",
+	"type": "robo-tasks",
+	"description": "Robo tasks and Robofile for symfony apps",
 	"require": {
+		"php": ">=5.5.0",
 		"consolidation/robo": "~1"
 	},
 	"autoload": {
