@@ -190,7 +190,7 @@ class RoboFile extends Tasks
         $this->say('Finishing release '.$version);
 
         $this->taskExec('git flow release finish')
-            ->arg('-m '.$version)
+            ->arg('-m="'.$version.'"')
             ->arg($version)
             ->run();
 
